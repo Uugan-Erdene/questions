@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User2, ChevronUp, ChevronDown } from "lucide-react";
 
+
 export function AppSidebar() {
   return (
     <Sidebar className="h-full pt-14 ">
