@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./components_/appSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,10 +27,39 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div>
+          <div className="w-full h-14 border border-[#E4E4E7] flex items-center justify-between">
+            <h1 className="pl-6 font-semibold text-2xl">Quiz app</h1>
+
+            <img src={"/avatar.png"} className="w-10 h-10 mr-6" />
+          </div>
+          <SidebarProvider>
+            <AppSidebar />
+            <main>
+              <SidebarTrigger />
+              {children}
+            </main>
+          </SidebarProvider>
+        </div>
       </body>
     </html>
   );
 }
+
+// import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+// import { AppSidebar } from "@/components/app-sidebar"
+
+// export default function Layout({ children }: { children: React.ReactNode }) {
+//   return (
+//     <SidebarProvider>
+//       <AppSidebar />
+//       <main>
+//         <SidebarTrigger />
+//         {children}
+//       </main>
+//     </SidebarProvider>
+//   )
+// }
