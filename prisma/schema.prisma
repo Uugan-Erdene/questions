@@ -14,18 +14,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+// model User {
+//   id    Int     @id @default(autoincrement())
+//   email String  @unique
+//   name  String?
+//   posts Post[]
+// }
+
+// model Post {
+//   id        Int     @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   published Boolean @default(false)
+//   authorId  Int
+//   author    User    @relation(fields: [authorId], references: [id])
+// }
+model Article{
+  id String  @id @unique @default(cuid()) 
+  title String
+  content String
+  summary String
+  userId String
+  user User @relation(fields: [userId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizzes Quiz[]
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+model User{
+  id String @id @unique @default(cuid())
+  clerkld String @unique
+  email String @unique
+  name String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  articles Article[]
+}
+
+model Quiz{
+  id String @id @unique @default(cuid())
+  question String
+  options String[]
+  answer String
+  articleId String
+  article Article @relation(fields: [articleId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizAttempts QuizAttempts[]
+  userScores UserScore[]
+}
+
+model QuizAttempt{
+   id String  @id @unique @default(cuid()) 
+   userId String
+   user User @relation(fields: [userId], references: [id])
+   quizId String
+   quiz Quiz @relation(fields: [quizId],references: [id])
+
+}
+
+model UserScores{
+id String @id @unique @default(cuid()) 
+userId String
+user User @relation(fields: [userId], references: [id])
+quizId String
+quiz Quiz @relation(fields: [quizId],references: [id])
+totalScore Int
 }
