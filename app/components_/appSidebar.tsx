@@ -21,34 +21,39 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User2, ChevronUp, ChevronDown } from "lucide-react";
 
-
 export function AppSidebar() {
   return (
     <Sidebar className="h-full pt-14 ">
       <div className="px-4 py-4 flex flex-col gap-7">
         <div>
-          <h1 className="font-semibold">History</h1>
+          <h1 className="font-semibold cursor-pointer">History</h1>
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium h-12 w-54">Genghis Khan</p>
-          <p className="text-sm font-medium h-12 w-54">Figma ашиглах заавар</p>
-          <p className="text-sm font-medium h-12 w-54">Санхүүгийн шийдвэрүүд</p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
+            Genghis Khan
+          </p>
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
+            Figma ашиглах заавар
+          </p>
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
+            Санхүүгийн шийдвэрүүд
+          </p>
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Figma-д загвар зохион бүтээх аргачлалууд
           </p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Санхүүгийн технологи 2023
           </p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Хэрэглэгчийн интерфейс дизайны шилдэг туршлага
           </p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Архитектур загварчлалын хөтөлбөрүүд
           </p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Эрүүл амьдралын хэв маяг
           </p>
-          <p className="text-sm font-medium h-12 w-54">
+          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Технологийн салбарт хийгдэж буй инноваци
           </p>
         </div>
