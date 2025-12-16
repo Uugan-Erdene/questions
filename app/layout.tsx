@@ -39,24 +39,23 @@ export default function RootLayout({
           suppressHydrationWarning
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton>
-                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
           <div>
             <div className="w-full h-14 border border-[#E4E4E7] flex items-center justify-between">
               <h1 className="pl-6 font-semibold text-2xl">Quiz app</h1>
-
-              <img src={"/avatar.png"} className="w-10 h-10 mr-6" />
+              <header className="flex justify-end items-center p-4 gap-4 h-16">
+                <SignedOut>
+                  <SignInButton />
+                  <SignUpButton>
+                    <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                      Sign Up
+                    </button>
+                  </SignUpButton>
+                </SignedOut>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+              </header>
+              {/* <img src={"/avatar.png"} className="w-10 h-10 mr-6" /> */}
             </div>
             <SidebarProvider>
               <AppSidebar />
