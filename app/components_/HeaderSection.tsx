@@ -3,18 +3,19 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { DarkStar } from "../icons/darkStar";
 import { NoteBook } from "../icons/notebook";
+import { useUser } from "@clerk/nextjs";
 
 export const HeaderSection = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const handleGenerateQuiz = async () => {
-    if (!title || !content) {
+    if (!title || !content || !user) {
       alert("Title болон content хоёуланг нь бөглөнө үү");
       return;
     }
-
     try {
       setLoading(true);
 
@@ -26,7 +27,7 @@ export const HeaderSection = () => {
         body: JSON.stringify({
           title,
           content,
-          summary: "generated later", // одоохондоо placeholder
+          userId: user?.id,
         }),
       });
 
@@ -40,6 +41,8 @@ export const HeaderSection = () => {
       console.error(error);
     } finally {
       setLoading(false);
+      console.log(title, "titlehsbfi");
+      console.log(content, "iubfiusbdfwiufb");
     }
   };
 
@@ -62,6 +65,7 @@ export const HeaderSection = () => {
             Article Title
           </label>
           <input
+            onKeyPress={(e) => e.key === "Enter" && handleGenerateQuiz()}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter a title for your article…"
             className="h-10 w-full border-[#E4E4E7] focus:ring-0 focus:border-[#E4A600] border rounded-sm pl-2"
@@ -74,6 +78,7 @@ export const HeaderSection = () => {
             Article Content
           </label>
           <Textarea
+            onKeyPress={(e) => e.key === "Enter" && handleGenerateQuiz()}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Paste your article content here…"

@@ -1,32 +1,41 @@
+import { GoogleGenAI } from "@google/genai";
 import prisma from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { NextRequest } from "next/server";
+const geminiApi = new GoogleGenAI({ apiKey: process.env.GEMINI_AI_TOKEN });
 
-export const POST = async (request: Request) => {
+export const POST = async (request: NextRequest) => {
   try {
-    const user = await currentUser();
+    const { title, content, userId } = await request.json();
 
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Not authenticated" }), {
-        status: 401,
-      });
-    }
-
-    const { title, content, summary } = await request.json();
-
-    if (!title || !content || !summary) {
+    if (!title || !content || !userId) {
       return new Response(JSON.stringify({ error: "Missing fields" }), {
         status: 400,
       });
     }
+    const res = await geminiApi.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `Доорх нийтлэлийн товч хураангуйг 2–3 өгүүлбэрээр Монгол хэл дээр гарга:\n\n${content}`,
+            },
+          ],
+        },
+      ],
+    });
+    console.log(res);
+    const { candidates } = res as any;
+    const summary = candidates[0].content.parts[0].text;
+    console.log(summary, "wdas");
 
     const article = await prisma.article.create({
       data: {
-        title,
-        content,
-        summary,
-        user: {
-          connect: { id: user.id }, // 👈 Clerk хэрэглэгчтэй холбож байна
-        },
+        title: title,
+        content: content,
+        summary: summary,
+        userId: userId,
       },
     });
 
@@ -38,13 +47,14 @@ export const POST = async (request: Request) => {
     });
   }
 };
-export const GET = async (request: Request) => {
+
+export const GET = async (request: NextRequest) => {
   try {
     const articles = await prisma.article.findMany();
     return new Response(JSON.stringify({ articles }), { status: 200 });
   } catch (error) {
     console.log(error);
-    return new Response("Failed to fetch all articles", { status: 501 });
+    return new Response("Failed to fetch all articles", { status: 50 });
   }
 };
 
