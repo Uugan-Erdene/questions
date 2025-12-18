@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components_/appSidebar";
+import { HistoryProvider } from "./feuters/historyProvider";
 import {
   ClerkProvider,
   SignInButton,
@@ -58,11 +59,13 @@ export default function RootLayout({
               {/* <img src={"/avatar.png"} className="w-10 h-10 mr-6" /> */}
             </div>
             <SidebarProvider>
-              <AppSidebar />
-              <main>
-                <SidebarTrigger />
-                {children}
-              </main>
+              <HistoryProvider>
+                <AppSidebar />
+                <main className="flex-1">
+                  <SidebarTrigger />
+                  {children}
+                </main>
+              </HistoryProvider>
             </SidebarProvider>
           </div>
         </body>
@@ -70,18 +73,3 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
-
-// import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-// import { AppSidebar } from "@/components/app-sidebar"
-
-// export default function Layout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <SidebarProvider>
-//       <AppSidebar />
-//       <main>
-//         <SidebarTrigger />
-//         {children}
-//       </main>
-//     </SidebarProvider>
-//   )
-// }

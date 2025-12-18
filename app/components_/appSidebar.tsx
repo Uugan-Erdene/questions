@@ -1,27 +1,9 @@
 "use client";
-import {
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  Sidebar,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { User2, ChevronUp, ChevronDown } from "lucide-react";
+import { Sidebar } from "@/components/ui/sidebar";
+import { useHistory } from "../feuters/historyProvider";
 
 export function AppSidebar() {
+  const { history } = useHistory();
   return (
     <Sidebar className="h-full pt-14 ">
       <div className="px-4 py-4 flex flex-col gap-7">
@@ -29,64 +11,26 @@ export function AppSidebar() {
           <h1 className="font-semibold cursor-pointer">History</h1>
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Genghis Khan
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
+          {history.length === 0 && (
+            <p className="text-sm text-muted-foreground">No history yet</p>
+          )}
+          {history.map((item, index) => (
+            <p
+              key={index}
+              className="text-sm font-medium h-12 w-54 cursor-pointer"
+            >
+              {item}
+            </p>
+          ))}
+
+          {/* <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Figma ашиглах заавар
           </p>
           <p className="text-sm font-medium h-12 w-54 cursor-pointer">
             Санхүүгийн шийдвэрүүд
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Figma-д загвар зохион бүтээх аргачлалууд
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Санхүүгийн технологи 2023
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Хэрэглэгчийн интерфейс дизайны шилдэг туршлага
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Архитектур загварчлалын хөтөлбөрүүд
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Эрүүл амьдралын хэв маяг
-          </p>
-          <p className="text-sm font-medium h-12 w-54 cursor-pointer">
-            Технологийн салбарт хийгдэж буй инноваци
-          </p>
+          </p> */}
         </div>
       </div>
-      {/* <SidebarContent> */}
-      {/* <SidebarMenu>
-          <SidebarMenuItem>History</SidebarMenuItem>
-          <SidebarMenuItem>Item 1</SidebarMenuItem>
-          <SidebarMenuItem>Item 2</SidebarMenuItem>
-        </SidebarMenu> */}
-      {/* </SidebarContent> */}
-      {/* <SidebarHeader> */}
-      {/* <SidebarMenu> */}
-      {/* <SidebarMenuItem> */}
-      {/* <DropdownMenu> */}
-      {/* <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  Select Workspace
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger> */}
-      {/* <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Acme Inc</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Acme Corp.</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent> */}
-      {/* </DropdownMenu> */}
-      {/* </SidebarMenuItem> */}
-      {/* </SidebarMenu> */}
-      {/* </SidebarHeader> */}
     </Sidebar>
   );
 }
