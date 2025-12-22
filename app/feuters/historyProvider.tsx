@@ -1,22 +1,28 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
 
+type HistoryItem = {
+  id: string;
+  title: string;
+  summary: string;
+};
+
 type HistoryContextType = {
-  history: string[];
-  addHistory: (title: string) => void;
+  history: HistoryItem[];
+  selected: HistoryItem | null;
+  addHistory: (item: HistoryItem) => void;
+  selectHistory: (item: HistoryItem) => void;
 };
 
 const HistoryContext = createContext<HistoryContextType | null>(null);
 
-export const HistoryProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [history, setHistory] = useState<string[]>([]);
+export function HistoryProvider({ children }: { children: React.ReactNode }) {
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [selected, setSelected] = useState<HistoryItem | null>(null);
 
-  // refresh хийсэн ч history хадгалах
+  /**
+   * 🔹 1. Refresh үед localStorage-с уншина
+   */
   useEffect(() => {
     const saved = localStorage.getItem("history");
     if (saved) {
@@ -24,22 +30,32 @@ export const HistoryProvider = ({
     }
   }, []);
 
-  const addHistory = (title: string) => {
-    setHistory((prev) => {
-      if (prev.includes(title)) return prev;
+  /**
+   * 🔹 2. History өөрчлөгдөх бүрт хадгална
+   */
+  useEffect(() => {
+    localStorage.setItem("history", JSON.stringify(history));
+  }, [history]);
 
-      const updated = [title, ...prev].slice(0, 10);
-      localStorage.setItem("history", JSON.stringify(updated));
-      return updated;
+  const addHistory = (item: HistoryItem) => {
+    setHistory((prev) => {
+      if (prev.find((h) => h.id === item.id)) return prev;
+      return [item, ...prev];
     });
   };
 
+  const selectHistory = (item: HistoryItem) => {
+    setSelected(item);
+  };
+
   return (
-    <HistoryContext.Provider value={{ history, addHistory }}>
+    <HistoryContext.Provider
+      value={{ history, selected, addHistory, selectHistory }}
+    >
       {children}
     </HistoryContext.Provider>
   );
-};
+}
 
 export const useHistory = () => {
   const ctx = useContext(HistoryContext);

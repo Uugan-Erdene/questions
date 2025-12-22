@@ -3,7 +3,8 @@ import { Sidebar } from "@/components/ui/sidebar";
 import { useHistory } from "../feuters/historyProvider";
 
 export function AppSidebar() {
-  const { history } = useHistory();
+  const { history, selectHistory } = useHistory();
+
   return (
     <Sidebar className="h-full pt-14 ">
       <div className="px-4 py-4 flex flex-col gap-7">
@@ -16,10 +17,11 @@ export function AppSidebar() {
           )}
           {history.map((item, index) => (
             <p
-              key={index}
+              key={item.id || index}
+              onClick={() => selectHistory(item)}
               className="text-sm font-medium h-12 w-54 cursor-pointer"
             >
-              {item}
+              {item.title}
             </p>
           ))}
 

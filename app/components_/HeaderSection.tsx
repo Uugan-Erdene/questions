@@ -42,7 +42,11 @@ export const HeaderSection = () => {
       }
 
       const data = await res.json();
-      addHistory(title);
+      addHistory({
+        id: data.id,
+        title: data.title,
+        summary: data.summary,
+      });
       setSummary(data.summary || "successufly");
       setStep(2);
 

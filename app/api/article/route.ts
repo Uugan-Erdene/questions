@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import prisma from "@/lib/prisma";
 import { NextRequest } from "next/server";
+import { error } from "console";
 const geminiApi = new GoogleGenAI({ apiKey: process.env.GEMINI_AI_TOKEN });
 
 export const POST = async (request: NextRequest) => {
@@ -50,7 +51,19 @@ export const POST = async (request: NextRequest) => {
 
 export const GET = async (request: NextRequest) => {
   try {
-    const articles = await prisma.article.findMany();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return Response.json(
+        { error: "Article id is required" },
+        { status: 400 }
+      );
+    }
+
+    const articles = await prisma.article.findMany({ where: { id } });
+    if (!articles) {
+      return Response.json({ error: "Article id not found" }, { status: 404 });
+    }
     return new Response(JSON.stringify({ articles }), { status: 200 });
   } catch (error) {
     console.log(error);
