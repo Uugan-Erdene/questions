@@ -20,9 +20,6 @@ export function HistoryProvider({ children }: { children: React.ReactNode }) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [selected, setSelected] = useState<HistoryItem | null>(null);
 
-  /**
-   * 🔹 1. Refresh үед localStorage-с уншина
-   */
   useEffect(() => {
     const saved = localStorage.getItem("history");
     if (saved) {
@@ -30,9 +27,6 @@ export function HistoryProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  /**
-   * 🔹 2. History өөрчлөгдөх бүрт хадгална
-   */
   useEffect(() => {
     localStorage.setItem("history", JSON.stringify(history));
   }, [history]);

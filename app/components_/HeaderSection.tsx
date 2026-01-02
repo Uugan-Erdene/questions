@@ -17,6 +17,7 @@ export const HeaderSection = () => {
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
   const { addHistory } = useHistory();
+
   const handleGenerateQuiz = async () => {
     if (!title || !content || !user) {
       alert("Title болон content хоёуланг нь бөглөнө үү");

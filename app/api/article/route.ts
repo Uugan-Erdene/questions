@@ -49,27 +49,27 @@ export const POST = async (request: NextRequest) => {
   }
 };
 
-export const GET = async (request: NextRequest) => {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-    if (!id) {
-      return Response.json(
-        { error: "Article id is required" },
-        { status: 400 }
-      );
-    }
+    const articles = await prisma.article.findMany({
+      select: {
+        id: true,
+        title: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-    const articles = await prisma.article.findMany({ where: { id } });
-    if (!articles) {
-      return Response.json({ error: "Article id not found" }, { status: 404 });
-    }
-    return new Response(JSON.stringify({ articles }), { status: 200 });
+    return Response.json(articles, { status: 200 });
   } catch (error) {
-    console.log(error);
-    return new Response("Failed to fetch all articles", { status: 50 });
+    console.error(error);
+    return Response.json(
+      { error: "Failed to fetch articles" },
+      { status: 500 }
+    );
   }
-};
+}
 
 // export const GET = async () => {
 //   try {
