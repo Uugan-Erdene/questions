@@ -15,6 +15,17 @@ export default function Home() {
     summary: string;
     content: string;
   } | null>();
+  type Quiz = {
+    id: string;
+    question: string;
+    options: string[];
+    answer: string;
+  };
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [current, setCurrent] = useState(0);
+  const currentQuiz = quizzes[current];
+  const [selected, setSelected] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
 
   const getArticle = async () => {
     try {
@@ -56,11 +67,32 @@ export default function Home() {
       const data = await res.json();
 
       console.log("quiz", data);
+      setQuizzes((data.quizzes || data.article || []).slice(0, 5));
+      setCurrent(0);
       setPage(2);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const handleAnswer = (index: number) => {
+    if (!currentQuiz) return;
+    setSelected(index);
+    const correctIndex = currentQuiz.answer.charCodeAt(0) - 65;
+    if (index === correctIndex) {
+      setScore((prev) => prev + 1);
+    }
+    setTimeout(() => {
+      const isLast = current === quizzes.length - 1;
+      if (!isLast) {
+        setCurrent((prev) => prev + 1);
+        setSelected(null);
+      } else {
+        setPage(3);
+      }
+    }, 800);
+  };
+
   return (
     <>
       {page === 1 && (
@@ -110,7 +142,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      {page === 2 && (
+      {page === 2 && currentQuiz ? (
         <div className="w-full flex justify-center">
           <div className="max-w-[720px] w-full rounded-xl">
             <div className="flex justify-between mb-6">
@@ -122,28 +154,73 @@ export default function Home() {
                   Take a quick test about your knowledge from your content
                 </p>
               </div>
-              <button className="cursor-pointer w-12 h-10 bg-white border border-[#8080803e] rounded-sm">
+              <button
+                onClick={() => setPage(1)}
+                className="cursor-pointer w-12 h-10 bg-white border border-[#8080803e] rounded-sm"
+              >
                 ✕
               </button>
             </div>
 
             <div className="border rounded-lg p-6">
               <div className="flex justify-between mb-4 items-center gap-2 font-medium">
-                <p>What was Genghis Khan’s birth name?</p>
-                <span className="text-sm text-gray-400"> 1/ 5</span>
+                <p>{currentQuiz.question}</p>
+                <span className="text-sm text-gray-400">
+                  {current + 1} / {quizzes.length}
+                </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {["Yesugei", "Temüjin", "Jamukha", "Toghrul"].map((opt) => (
-                  <button
-                    key={opt}
-                    className="border rounded py-3 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {opt}
-                  </button>
-                ))}
+                {currentQuiz.options.map((opt, index) => {
+                  const correctIndex = currentQuiz.answer.charCodeAt(0) - 65;
+                  let style = "border";
+
+                  if (selected !== null) {
+                    if (index === correctIndex) style = "border bg-green-100";
+                    else if (index === selected) style = "border bg-red-100";
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      disabled={selected !== null}
+                      onClick={() => handleAnswer(index)}
+                      className={`rounded py-3 ${style}`}
+                    >
+                      {String.fromCharCode(65 + index)}. {opt}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+          </div>
+        </div>
+      ) : page === 2 ? (
+        <p className="text-center text-gray-400 mt-4">
+          Quiz loading or finished...
+        </p>
+      ) : null}
+
+      {page === 3 && (
+        <div className="flex justify-center">
+          <div className="max-w-md border rounded-lg p-6 text-center">
+            <h2 className="text-xl font-bold mb-4">Result 🎉</h2>
+            <p className="text-lg">
+              You scored <b>{score}</b> / {quizzes.length}
+            </p>
+
+            <button
+              onClick={() => {
+                setPage(1);
+                setQuizzes([]);
+                setCurrent(0);
+                setSelected(null);
+                setScore(0);
+              }}
+              className="mt-6 bg-black text-white px-4 py-2 rounded"
+            >
+              Back to article
+            </button>
           </div>
         </div>
       )}
