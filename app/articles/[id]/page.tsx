@@ -1,5 +1,4 @@
 "use client";
-import { QuizSection } from "@/app/feuters/quizSection";
 import { DarkStar } from "@/app/icons/darkStar";
 import { Spinner } from "@/components/ui/spinner";
 import { Book } from "lucide-react";
@@ -26,7 +25,9 @@ export default function Home() {
   const currentQuiz = quizzes[current];
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
-
+  const [answers, setAnswers] = useState<
+  { selected: number; correct: number }[]
+>([]);
   const getArticle = async () => {
     try {
       // fetch(`/api/article?id=${articleId}`)
@@ -202,28 +203,89 @@ export default function Home() {
       ) : null}
 
       {page === 3 && (
-        <div className="flex justify-center">
-          <div className="max-w-md border rounded-lg p-6 text-center">
-            <h2 className="text-xl font-bold mb-4">Result 🎉</h2>
-            <p className="text-lg">
-              You scored <b>{score}</b> / {quizzes.length}
-            </p>
+  <div className="flex justify-center">
+    <div className="w-full max-w-md border rounded-xl p-6">
+      <h2 className="text-xl font-bold mb-1 flex items-center gap-2">
+        ✨ Quiz completed
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Let’s see what you did
+      </p>
 
-            <button
-              onClick={() => {
-                setPage(1);
-                setQuizzes([]);
-                setCurrent(0);
-                setSelected(null);
-                setScore(0);
-              }}
-              className="mt-6 bg-black text-white px-4 py-2 rounded"
-            >
-              Back to article
-            </button>
-          </div>
+      <div className="border rounded-lg p-4 mb-4">
+        <p className="font-medium mb-3">
+          Your score: <b>{score}</b> / {quizzes.length}
+        </p>
+
+        <div className="space-y-3">
+          {quizzes.map((quiz, i) => {
+            const userAnswer = answers[i];
+            if (!userAnswer) return null;
+
+            const isCorrect =
+              userAnswer.selected === userAnswer.correct;
+
+            return (
+              <div
+                key={i}
+                className="border rounded p-3 text-sm"
+              >
+                <div className="flex gap-2 font-medium">
+                  <span>
+                    {isCorrect ? "✅" : "❌"}
+                  </span>
+                  <p>{quiz.question}</p>
+                </div>
+
+                <p className="mt-1 text-gray-600">
+                  Your answer:{" "}
+                  <span className="font-medium">
+                    {quiz.options[userAnswer.selected]}
+                  </span>
+                </p>
+
+                {!isCorrect && (
+                  <p className="text-green-600">
+                    Correct:{" "}
+                    {
+                      quiz.options[
+                        userAnswer.correct
+                      ]
+                    }
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => {
+            setPage(1);
+            setQuizzes([]);
+            setCurrent(0);
+            setSelected(null);
+            setScore(0);
+            setAnswers([]);
+          }}
+          className="flex-1 border rounded py-2"
+        >
+          Restart quiz
+        </button>
+
+        <button
+          onClick={() => setPage(1)}
+          className="flex-1 bg-black text-white rounded py-2"
+        >
+          Save and leave
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 }
