@@ -1,5 +1,7 @@
 "use client";
 import { DarkStar } from "@/app/icons/darkStar";
+import { Resart } from "@/app/icons/resart";
+import { Save } from "@/app/icons/save";
 import { Spinner } from "@/components/ui/spinner";
 import { Book } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -26,8 +28,8 @@ export default function Home() {
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<
-  { selected: number; correct: number }[]
->([]);
+    { selected: number; correct: number }[]
+  >([]);
   const getArticle = async () => {
     try {
       // fetch(`/api/article?id=${articleId}`)
@@ -70,6 +72,9 @@ export default function Home() {
       console.log("quiz", data);
       setQuizzes((data.quizzes || data.article || []).slice(0, 5));
       setCurrent(0);
+      setScore(0);
+      setSelected(null);
+      setAnswers([]);
       setPage(2);
     } catch (error) {
       console.error(error);
@@ -83,6 +88,15 @@ export default function Home() {
     if (index === correctIndex) {
       setScore((prev) => prev + 1);
     }
+
+    setAnswers((prev) => {
+      const updated = [...prev];
+      updated[current] = {
+        selected: index,
+        correct: correctIndex,
+      };
+      return updated;
+    });
     setTimeout(() => {
       const isLast = current === quizzes.length - 1;
       if (!isLast) {
@@ -203,89 +217,77 @@ export default function Home() {
       ) : null}
 
       {page === 3 && (
-  <div className="flex justify-center">
-    <div className="w-full max-w-md border rounded-xl p-6">
-      <h2 className="text-xl font-bold mb-1 flex items-center gap-2">
-        ✨ Quiz completed
-      </h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Let’s see what you did
-      </p>
+        <div className="flex justify-center">
+          <div className="w-full max-w-md border rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-1 flex items-center gap-2">
+              <DarkStar /> Quiz completed
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Let’s see what you did
+            </p>
 
-      <div className="border rounded-lg p-4 mb-4">
-        <p className="font-medium mb-3">
-          Your score: <b>{score}</b> / {quizzes.length}
-        </p>
+            <div className="border rounded-lg p-4 mb-4">
+              <p className="font-medium mb-3">
+                Your score: <b>{score}</b> / {quizzes.length}
+              </p>
 
-        <div className="space-y-3">
-          {quizzes.map((quiz, i) => {
-            const userAnswer = answers[i];
-            if (!userAnswer) return null;
+              <div className="space-y-3">
+                {quizzes.map((quiz, i) => {
+                  const userAnswer = answers[i];
+                  if (!userAnswer) return null;
 
-            const isCorrect =
-              userAnswer.selected === userAnswer.correct;
+                  const isCorrect = userAnswer.selected === userAnswer.correct;
 
-            return (
-              <div
-                key={i}
-                className="border rounded p-3 text-sm"
-              >
-                <div className="flex gap-2 font-medium">
-                  <span>
-                    {isCorrect ? "✅" : "❌"}
-                  </span>
-                  <p>{quiz.question}</p>
-                </div>
+                  return (
+                    <div key={i} className="border rounded p-3 text-sm">
+                      <div className="flex gap-2 font-medium">
+                        <span>{isCorrect ? "✅" : "❌"}</span>
+                        <p>{quiz.question}</p>
+                      </div>
 
-                <p className="mt-1 text-gray-600">
-                  Your answer:{" "}
-                  <span className="font-medium">
-                    {quiz.options[userAnswer.selected]}
-                  </span>
-                </p>
+                      <p className="mt-1 text-gray-600">
+                        Your answer:{" "}
+                        <span className="font-medium">
+                          {quiz.options[userAnswer.selected]}
+                        </span>
+                      </p>
 
-                {!isCorrect && (
-                  <p className="text-green-600">
-                    Correct:{" "}
-                    {
-                      quiz.options[
-                        userAnswer.correct
-                      ]
-                    }
-                  </p>
-                )}
+                      {!isCorrect && (
+                        <p className="text-green-600">
+                          Correct: {quiz.options[userAnswer.correct]}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setPage(1);
+                  setQuizzes([]);
+                  setCurrent(0);
+                  setSelected(null);
+                  setScore(0);
+                  setAnswers([]);
+                }}
+                className="w-44 h-10 justify-center items-center gap-2 flex border rounded py-2"
+              >
+                <Resart /> Restart quiz
+              </button>
+
+              <button
+                onClick={() => setPage(1)}
+                className="w-44 h-10 justify-center items-center gap-2 flex bg-black text-white rounded py-2"
+              >
+                <Save /> Save and leave
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="flex gap-3">
-        <button
-          onClick={() => {
-            setPage(1);
-            setQuizzes([]);
-            setCurrent(0);
-            setSelected(null);
-            setScore(0);
-            setAnswers([]);
-          }}
-          className="flex-1 border rounded py-2"
-        >
-          Restart quiz
-        </button>
-
-        <button
-          onClick={() => setPage(1)}
-          className="flex-1 bg-black text-white rounded py-2"
-        >
-          Save and leave
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+      )}
     </>
   );
 }
